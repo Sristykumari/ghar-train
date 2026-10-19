@@ -1,0 +1,174 @@
+{
+  "_readme": [
+    "DEMO DATA for Ghar Train. Station names, codes and approximate coordinates are real places; every TRAIN is invented.",
+    "Edit this file to change the demo. The server reloads it on restart.",
+    "Trains: 'route' lists station codes in order. Prefix a code with '~' if the train passes without stopping.",
+    "'departures' are HH:MM times from the first station (one copy of the train per time). Copies get numbers base, base+2, base+4 ...",
+    "'returnDepartures' create the same train in the opposite direction, numbered base+1, base+3 ...",
+    "'speedKmph' sets running time between stations; distances come from coordinates. 'halt' is minutes at each stop; 'halts' overrides per station.",
+    "'delayMinutes' is the simulated delay. 'noLive' lists copy indexes (0 = first departure) that have no live feed; 'staleLive' lists copies whose feed is 45 min old."
+  ],
+  "label": "Demo network",
+  "stations": [
+    { "code": "NDLS", "name": "New Delhi", "city": "Delhi", "lat": 28.643, "lng": 77.2194, "platforms": 16 },
+    { "code": "FDB", "name": "Faridabad", "city": "Faridabad", "lat": 28.4116, "lng": 77.3091, "platforms": 4 },
+    { "code": "PWL", "name": "Palwal", "city": "Palwal", "lat": 28.1446, "lng": 77.3254, "platforms": 3 },
+    { "code": "KSV", "name": "Kosi Kalan", "city": "Kosi Kalan", "lat": 27.79, "lng": 77.43, "platforms": 2 },
+    { "code": "MTJ", "name": "Mathura Junction", "city": "Mathura", "lat": 27.48, "lng": 77.673, "platforms": 6 },
+    { "code": "RKM", "name": "Raja Ki Mandi", "city": "Agra", "lat": 27.2005, "lng": 78.004, "platforms": 2 },
+    { "code": "AGC", "name": "Agra Cantt", "city": "Agra", "lat": 27.159, "lng": 77.99, "platforms": 6 },
+    { "code": "DHO", "name": "Dholpur", "city": "Dholpur", "lat": 26.702, "lng": 77.893, "platforms": 3 },
+    { "code": "MRA", "name": "Morena", "city": "Morena", "lat": 26.496, "lng": 77.993, "platforms": 3 },
+    { "code": "GWL", "name": "Gwalior Junction", "city": "Gwalior", "lat": 26.217, "lng": 78.182, "platforms": 4 },
+    { "code": "DAA", "name": "Datia", "city": "Datia", "lat": 25.672, "lng": 78.46, "platforms": 2 },
+    { "code": "VGLJ", "name": "Virangana Lakshmibai Jhansi Junction", "city": "Jhansi", "lat": 25.448, "lng": 78.568, "platforms": 8 },
+    { "code": "LAR", "name": "Lalitpur Junction", "city": "Lalitpur", "lat": 24.688, "lng": 78.412, "platforms": 3 },
+    { "code": "BINA", "name": "Bina Junction", "city": "Bina", "lat": 24.183, "lng": 78.2, "platforms": 5 },
+    { "code": "VDS", "name": "Vidisha", "city": "Vidisha", "lat": 23.525, "lng": 77.812, "platforms": 3 },
+    { "code": "BPL", "name": "Bhopal Junction", "city": "Bhopal", "lat": 23.266, "lng": 77.413, "platforms": 6 },
+    { "code": "SGO", "name": "Saugor", "city": "Sagar", "lat": 23.84, "lng": 78.75, "platforms": 3 },
+    { "code": "KTE", "name": "Katni Junction", "city": "Katni", "lat": 23.83, "lng": 80.39, "platforms": 5 },
+    { "code": "ET", "name": "Itarsi Junction", "city": "Itarsi", "lat": 22.614, "lng": 77.762, "platforms": 7 },
+    { "code": "NGP", "name": "Nagpur Junction", "city": "Nagpur", "lat": 21.152, "lng": 79.088, "platforms": 8 },
+    { "code": "BZA", "name": "Vijayawada Junction", "city": "Vijayawada", "lat": 16.518, "lng": 80.619, "platforms": 10 },
+    { "code": "MAS", "name": "Chennai Central", "city": "Chennai", "lat": 13.083, "lng": 80.275, "platforms": 12 },
+    { "code": "KPD", "name": "Katpadi Junction", "city": "Vellore", "lat": 12.972, "lng": 79.138, "platforms": 5 },
+    { "code": "SBC", "name": "KSR Bengaluru", "city": "Bengaluru", "lat": 12.978, "lng": 77.57, "platforms": 10 },
+    { "code": "KOTA", "name": "Kota Junction", "city": "Kota", "lat": 25.182, "lng": 75.829, "platforms": 6 },
+    { "code": "RTM", "name": "Ratlam Junction", "city": "Ratlam", "lat": 23.342, "lng": 75.04, "platforms": 7 },
+    { "code": "BRC", "name": "Vadodara Junction", "city": "Vadodara", "lat": 22.31, "lng": 73.181, "platforms": 7 },
+    { "code": "ST", "name": "Surat", "city": "Surat", "lat": 21.206, "lng": 72.84, "platforms": 4 },
+    { "code": "MMCT", "name": "Mumbai Central", "city": "Mumbai", "lat": 18.969, "lng": 72.819, "platforms": 9 },
+    { "code": "ADI", "name": "Ahmedabad Junction", "city": "Ahmedabad", "lat": 23.026, "lng": 72.601, "platforms": 12 },
+    { "code": "CSMT", "name": "Mumbai CSMT", "city": "Mumbai", "lat": 18.94, "lng": 72.835, "platforms": 18 },
+    { "code": "KYN", "name": "Kalyan Junction", "city": "Kalyan", "lat": 19.236, "lng": 73.131, "platforms": 8 },
+    { "code": "PUNE", "name": "Pune Junction", "city": "Pune", "lat": 18.529, "lng": 73.874, "platforms": 6 },
+    { "code": "CNB", "name": "Kanpur Central", "city": "Kanpur", "lat": 26.454, "lng": 80.351, "platforms": 10 },
+    { "code": "LKO", "name": "Lucknow Charbagh", "city": "Lucknow", "lat": 26.832, "lng": 80.923, "platforms": 9 },
+    { "code": "PRYJ", "name": "Prayagraj Junction", "city": "Prayagraj", "lat": 25.446, "lng": 81.83, "platforms": 10 },
+    { "code": "DDU", "name": "Pt. Deen Dayal Upadhyaya Junction", "city": "Mughalsarai", "lat": 25.278, "lng": 83.119, "platforms": 8 },
+    { "code": "PNBE", "name": "Patna Junction", "city": "Patna", "lat": 25.603, "lng": 85.137, "platforms": 10 },
+    { "code": "HWH", "name": "Howrah Junction", "city": "Kolkata", "lat": 22.583, "lng": 88.342, "platforms": 23 },
+    { "code": "RE", "name": "Rewari Junction", "city": "Rewari", "lat": 28.196, "lng": 76.618, "platforms": 6 },
+    { "code": "AWR", "name": "Alwar Junction", "city": "Alwar", "lat": 27.56, "lng": 76.611, "platforms": 3 },
+    { "code": "JP", "name": "Jaipur Junction", "city": "Jaipur", "lat": 26.92, "lng": 75.787, "platforms": 8 }
+  ],
+  "layouts": [
+    { "stationCode": "GWL", "leftNeighbours": ["MRA", "DHO"], "rightNeighbours": ["DAA", "VGLJ"], "platforms": ["1", "2", "3", "4"], "sourceNote": "Demo layout. Not surveyed track data." },
+    { "stationCode": "MTJ", "leftNeighbours": ["KSV", "PWL"], "rightNeighbours": ["RKM", "AGC", "KOTA"], "platforms": ["1", "2", "3", "4", "5", "6"], "sourceNote": "Demo layout. Not surveyed track data." }
+  ],
+  "coachFormations": {
+    "Passenger": ["ENG", "SLR", "GS", "GS", "GS", "GS", "GS", "GS", "GS", "GS", "SLR"],
+    "Express": ["ENG", "SLR", "GS", "GS", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "B1", "B2", "B3", "A1", "GS", "SLR"],
+    "Superfast": ["ENG", "EOG", "H1", "A1", "A2", "B1", "B2", "B3", "B4", "B5", "B6", "PC", "S1", "S2", "S3", "S4", "GS", "EOG"],
+    "Rajdhani": ["ENG", "EOG", "H1", "A1", "A2", "A3", "A4", "PC", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "EOG"],
+    "Shatabdi": ["ENG", "EOG", "E1", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "EOG"],
+    "Mail": ["ENG", "SLR", "GS", "GS", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "B1", "B2", "B3", "A1", "H1", "GS", "SLR"]
+  },
+  "trains": [
+    {
+      "number": "90001", "name": "Demo Delhi–Bhopal Passenger", "type": "Passenger",
+      "route": ["NDLS", "FDB", "PWL", "KSV", "MTJ", "RKM", "AGC", "DHO", "MRA", "GWL", "DAA", "VGLJ", "LAR", "BINA", "VDS", "BPL"],
+      "departures": ["00:00", "06:00", "12:00", "18:00"], "returnDepartures": ["03:00", "09:00", "15:00", "21:00"],
+      "speedKmph": 52, "halt": 2, "halts": { "MTJ": 5, "AGC": 5, "GWL": 5, "VGLJ": 8, "BINA": 8 },
+      "delayMinutes": 25, "staleLive": [3]
+    },
+    {
+      "number": "91001", "name": "Demo Delhi–Bhopal Superfast", "type": "Superfast",
+      "route": ["NDLS", "~FDB", "~PWL", "~KSV", "MTJ", "~RKM", "AGC", "~DHO", "~MRA", "GWL", "~DAA", "VGLJ", "~LAR", "BINA", "~VDS", "BPL"],
+      "departures": ["02:00", "08:00", "14:00", "20:00"], "returnDepartures": ["01:00", "07:00", "13:00", "19:00"],
+      "speedKmph": 95, "halt": 3, "halts": { "VGLJ": 5 },
+      "delayMinutes": 5, "noLive": [2]
+    },
+    {
+      "number": "91101", "name": "Demo Mathura–Gwalior Shuttle", "type": "Express",
+      "route": ["MTJ", "~RKM", "AGC", "~DHO", "~MRA", "GWL"],
+      "departures": ["03:20", "09:20", "15:20", "21:20"], "returnDepartures": ["05:30", "11:30", "17:30", "23:30"],
+      "speedKmph": 100, "halt": 3, "delayMinutes": 0
+    },
+    {
+      "number": "91201", "name": "Demo Gwalior–Bhopal Superfast", "type": "Superfast",
+      "route": ["GWL", "~DAA", "VGLJ", "~LAR", "BINA", "~VDS", "BPL"],
+      "departures": ["05:30", "11:30", "17:30", "23:30"], "returnDepartures": ["02:30", "08:30", "14:30", "20:30"],
+      "speedKmph": 100, "halt": 3, "halts": { "VGLJ": 5 }, "delayMinutes": 10
+    },
+    {
+      "number": "91301", "name": "Demo Agra–Bhopal Express", "type": "Express",
+      "route": ["AGC", "~DHO", "~MRA", "GWL", "~DAA", "VGLJ", "LAR", "BINA", "~VDS", "BPL"],
+      "departures": ["04:25", "10:25", "16:25", "22:25"], "returnDepartures": ["06:10", "18:10"],
+      "speedKmph": 80, "halt": 3, "halts": { "GWL": 5, "VGLJ": 5 }, "delayMinutes": 40
+    },
+    {
+      "number": "91401", "name": "Demo Bina–Katni Link", "type": "Express",
+      "route": ["BINA", "SGO", "KTE"],
+      "departures": ["00:30", "06:30", "12:30", "18:30"], "returnDepartures": ["03:00", "09:00", "15:00", "21:00"],
+      "speedKmph": 70, "halt": 4, "delayMinutes": 0, "noLive": [0, 1, 2, 3]
+    },
+    {
+      "number": "92001", "name": "Demo Mumbai Rajdhani", "type": "Rajdhani",
+      "route": ["NDLS", "~MTJ", "KOTA", "RTM", "BRC", "ST", "MMCT"],
+      "departures": ["16:30", "04:30"], "returnDepartures": ["17:00", "05:00"],
+      "speedKmph": 95, "halt": 5, "delayMinutes": 15
+    },
+    {
+      "number": "92101", "name": "Demo Frontier Mail", "type": "Mail",
+      "route": ["NDLS", "MTJ", "KOTA", "RTM", "BRC", "ST", "MMCT"],
+      "departures": ["06:00", "18:00"], "returnDepartures": ["11:00", "23:00"],
+      "speedKmph": 62, "halt": 6, "halts": { "KOTA": 10, "RTM": 10 }, "delayMinutes": 35
+    },
+    {
+      "number": "92201", "name": "Demo Gujarat Express", "type": "Express",
+      "route": ["ADI", "BRC", "ST", "MMCT"],
+      "departures": ["05:00", "13:00", "21:00"], "returnDepartures": ["06:30", "14:30", "22:30"],
+      "speedKmph": 72, "halt": 4, "delayMinutes": 10
+    },
+    {
+      "number": "92301", "name": "Demo Howrah Express", "type": "Express",
+      "route": ["NDLS", "CNB", "PRYJ", "DDU", "PNBE", "HWH"],
+      "departures": ["08:00", "20:00"], "returnDepartures": ["09:30", "21:30"],
+      "speedKmph": 68, "halt": 8, "delayMinutes": 50
+    },
+    {
+      "number": "92401", "name": "Demo Howrah Duronto", "type": "Superfast",
+      "route": ["NDLS", "CNB", "~PRYJ", "DDU", "~PNBE", "HWH"],
+      "departures": ["22:00", "10:00"], "returnDepartures": ["12:00", "00:30"],
+      "speedKmph": 92, "halt": 5, "delayMinutes": 0
+    },
+    {
+      "number": "92501", "name": "Demo Lucknow Mail", "type": "Mail",
+      "route": ["NDLS", "CNB", "LKO"],
+      "departures": ["22:00", "10:00", "16:00"], "returnDepartures": ["21:30", "07:30", "14:00"],
+      "speedKmph": 72, "halt": 5, "delayMinutes": 20
+    },
+    {
+      "number": "92601", "name": "Demo Bhopal Shatabdi", "type": "Shatabdi",
+      "route": ["NDLS", "~FDB", "~PWL", "~KSV", "MTJ", "~RKM", "AGC", "~DHO", "~MRA", "GWL", "~DAA", "VGLJ", "~LAR", "~BINA", "~VDS", "BPL"],
+      "departures": ["06:00", "15:00"], "returnDepartures": ["14:40", "05:40"],
+      "speedKmph": 110, "halt": 3, "delayMinutes": 0
+    },
+    {
+      "number": "92701", "name": "Demo Grand Trunk Express", "type": "Mail",
+      "route": ["NDLS", "MTJ", "AGC", "GWL", "VGLJ", "BPL", "ET", "NGP", "BZA", "MAS"],
+      "departures": ["18:00", "06:00"], "returnDepartures": ["19:00", "07:00"],
+      "speedKmph": 68, "halt": 7, "halts": { "ET": 12, "NGP": 15, "BZA": 15 }, "delayMinutes": 30
+    },
+    {
+      "number": "92801", "name": "Demo Deccan Express", "type": "Express",
+      "route": ["CSMT", "KYN", "PUNE"],
+      "departures": ["07:00", "12:00", "17:00", "22:00"], "returnDepartures": ["06:00", "11:00", "16:00", "21:00"],
+      "speedKmph": 55, "halt": 3, "delayMinutes": 5
+    },
+    {
+      "number": "92901", "name": "Demo Bengaluru Mail", "type": "Mail",
+      "route": ["MAS", "KPD", "SBC"],
+      "departures": ["06:00", "14:00", "22:00"], "returnDepartures": ["07:00", "15:00", "23:00"],
+      "speedKmph": 70, "halt": 4, "delayMinutes": 12
+    },
+    {
+      "number": "93001", "name": "Demo Pink City Express", "type": "Express",
+      "route": ["NDLS", "RE", "AWR", "JP"],
+      "departures": ["06:00", "13:00", "17:00"], "returnDepartures": ["05:30", "15:30", "21:00"],
+      "speedKmph": 70, "halt": 4, "delayMinutes": 8
+    }
+  ]
+}

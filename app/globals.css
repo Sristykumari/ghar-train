@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f5ff;
+  --foreground: #121633;
+  --surface: #ffffff;
+  --surface-2: #eceffd;
+  --border: #d8dcf3;
+  --muted: #565d7d;
+  --primary: #3b3fd8;
+  --primary-fg: #ffffff;
+  --focus: #3b3fd8;
+
+  /* Feature accents: saffron, teal, pink. Text on these tints uses the strong shade. */
+  --accent: #c2410c;
+  --accent-solid: #f97316;
+  --accent-bg: #ffedd5;
+  --teal: #0f766e;
+  --teal-bg: #ccfbf1;
+  --pink: #be185d;
+  --pink-bg: #fce7f3;
+  --hero-from: #3b3fd8;
+  --hero-via: #7c3aed;
+  --hero-to: #f97316;
+
+  /* Departure-board panel stays dark in both themes, like a station display. */
+  --board-bg: #0d1726;
+  --board-row: #132036;
+  --board-fg: #e8edf6;
+  --board-muted: #93a1b8;
+  --board-accent: #ffc94a;
+
+  --ok: #067647;
+  --ok-bg: #dcfae6;
+  --warn: #b54708;
+  --warn-bg: #fef0c7;
+  --bad: #b42318;
+  --bad-bg: #fee4e2;
+  --info: #175cd3;
+  --info-bg: #d1e9ff;
+  --neutral: #475467;
+  --neutral-bg: #eaecf0;
+  --sim: #6941c6;
+  --sim-bg: #ebe9fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0f24;
+    --foreground: #e8eaff;
+    --surface: #151a36;
+    --surface-2: #1e2448;
+    --border: #2e3563;
+    --muted: #a3a9cc;
+    --primary: #8f93ff;
+    --primary-fg: #0c0f24;
+    --focus: #a5a8ff;
+
+    --accent: #fdba74;
+    --accent-solid: #fb923c;
+    --accent-bg: #431407;
+    --teal: #5eead4;
+    --teal-bg: #083d3a;
+    --pink: #f9a8d4;
+    --pink-bg: #500724;
+    --hero-from: #2c2fa8;
+    --hero-via: #5b21b6;
+    --hero-to: #c2410c;
+
+    --board-bg: #070d17;
+    --board-row: #0f192a;
+
+    --ok: #75e0a7;
+    --ok-bg: #053321;
+    --warn: #fec84b;
+    --warn-bg: #4e1d09;
+    --bad: #fda29b;
+    --bad-bg: #55160c;
+    --info: #84caff;
+    --info-bg: #102a56;
+    --neutral: #cfd4dc;
+    --neutral-bg: #2a3549;
+    --sim: #bdb4fe;
+    --sim-bg: #27115f;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-focus: var(--focus);
+  --color-accent: var(--accent);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-bg: var(--accent-bg);
+  --color-teal: var(--teal);
+  --color-teal-bg: var(--teal-bg);
+  --color-pink: var(--pink);
+  --color-pink-bg: var(--pink-bg);
+  --color-board: var(--board-bg);
+  --color-board-row: var(--board-row);
+  --color-board-fg: var(--board-fg);
+  --color-board-muted: var(--board-muted);
+  --color-board-accent: var(--board-accent);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-neutral: var(--neutral);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-sim: var(--sim);
+  --color-sim-bg: var(--sim-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Colourful hero: indigo → violet → saffron. White text keeps ≥ 4.5:1 on the indigo/violet part where text sits. */
+.hero-gradient {
+  background-image: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 55%, var(--hero-to) 130%);
+}
+
+/* Darker variant for cards with lots of text: stays in the indigo–violet range (white text ≥ 5.7:1). */
+.deep-gradient {
+  background-image: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 100%);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

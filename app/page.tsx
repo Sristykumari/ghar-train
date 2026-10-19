@@ -1,69 +1,72 @@
-import Image from "next/image";
+import Link from "next/link";
+import { RouteIcon, StationIcon, TrainIcon } from "@/components/layout/icons";
+import { HomeSearch } from "@/components/search/home-search";
+
+const TILES = [
+  { href: "/station", Icon: StationIcon, title: "Station board", text: "Arrivals, departures and platforms", tint: "bg-teal-bg text-teal" },
+  { href: "/station", Icon: TrainIcon, title: "Approaching trains", text: "What's about to arrive at your platform", tint: "bg-pink-bg text-pink" },
+  { href: "/planner", Icon: RouteIcon, title: "Faster route", text: "Change trains to get home sooner", tint: "bg-accent-bg text-accent" },
+  { href: "/between", Icon: RouteIcon, title: "Trains between stations", text: "All trains from A to B on a date", tint: "bg-info-bg text-info" },
+  { href: "/pnr", Icon: TrainIcon, title: "PNR, seats & fare", text: "Official Indian Railways / IRCTC links", tint: "bg-teal-bg text-teal" },
+  { href: "/api-docs", Icon: StationIcon, title: "Ghar Train API", text: "Our own API — try every endpoint live", tint: "bg-sim-bg text-sim" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="space-y-6">
+      <section className="hero-gradient relative overflow-hidden rounded-3xl p-6 pb-16 text-white shadow-lg sm:p-8 sm:pb-20">
+        <svg aria-hidden viewBox="0 0 400 120" className="absolute -right-6 -bottom-4 h-32 w-auto opacity-25" fill="none" stroke="white" strokeWidth="3">
+          <path d="M0 100h400M0 112h400" />
+          {Array.from({ length: 14 }, (_, i) => (
+            <path key={i} d={`M${i * 30 + 6} 96v20`} />
+          ))}
+          <rect x="150" y="30" width="160" height="58" rx="14" />
+          <path d="M150 58h160M180 30v58M230 30v58M280 30v58" />
+          <circle cx="185" cy="94" r="7" />
+          <circle cx="275" cy="94" r="7" />
+        </svg>
+        <p className="relative text-sm font-semibold tracking-wide text-white/85 uppercase">Ghar Train</p>
+        <h1 className="relative mt-1 text-3xl font-bold sm:text-4xl">Where&apos;s my train?</h1>
+        <p className="relative mt-2 max-w-xl text-white/90">
+          Live status, platforms and faster connections — and we always tell you what&apos;s live and what&apos;s only estimated.
+        </p>
+      </section>
+
+      <section aria-label="Search" className="-mt-10 relative mx-2 rounded-2xl border border-border bg-surface p-4 shadow-xl sm:mx-6 sm:p-6">
+        <HomeSearch />
+      </section>
+
+      <Link
+        href="/planner"
+        className="group flex items-center gap-4 rounded-2xl border border-accent-solid/40 bg-accent-bg p-5 text-foreground shadow-sm hover:border-accent-solid"
+      >
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-accent-solid text-white">
+          <RouteIcon />
+        </span>
+        <span className="flex-1">
+          <span className="block text-lg font-semibold">Need to get home sooner?</span>
+          <span className="block text-sm text-muted">We check where you can change trains and only suggest connections you can make.</span>
+        </span>
+        <span aria-hidden className="text-2xl text-accent transition-transform group-hover:translate-x-1">
+          →
+        </span>
+      </Link>
+
+      <ul className="grid gap-3 sm:grid-cols-3">
+        {TILES.map(({ href, Icon, title, text, tint }) => (
+          <li key={title}>
+            <Link href={href} className="flex h-full items-start gap-3 rounded-2xl border border-border bg-surface p-4 hover:border-primary">
+              <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${tint}`}>
+                <Icon />
+              </span>
+              <span>
+                <span className="block font-semibold">{title}</span>
+                <span className="block text-sm text-muted">{text}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
