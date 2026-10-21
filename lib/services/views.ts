@@ -100,6 +100,8 @@ export interface BoardRow {
   nextHalt: { code: string; name: string } | null;
   arrivesFrom: { code: string; name: string } | null;
   departsToward: { code: string; name: string } | null;
+  /** Codes of the stations this train still stops at after this one, in order. `null` when its route is unknown. */
+  haltsAfter: string[] | null;
   /** Side on the station track diagram. Only set when a verified layout supports it. */
   arrivalSide: "left" | "right" | null;
   departureSide: "left" | "right" | null;

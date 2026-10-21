@@ -4,10 +4,14 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DelayPill, PlatformTag, QualityBadge } from "@/components/ui/badges";
 import { Card, EmptyState, ErrorState, LoadingState, Notice } from "@/components/ui/states";
+import { SearchCombobox } from "@/components/ui/search-combobox";
+import { stationItem } from "@/components/search/quick-search";
 import { useApi } from "@/lib/client/api-client";
 import { formatAgo, formatCountdown, formatTime } from "@/lib/client/format";
+import { saveHomeStation, useHomeStation } from "@/lib/client/home-store";
 import { saveOrientation, useOrientation } from "@/lib/client/orientation-store";
 import { approachPhase, selectApproaching, type ApproachPhase } from "@/lib/services/approaching";
+import { goingHome, type GoingHome, type HomeStation } from "@/lib/services/going-home";
 import {
   applySides,
   completeOrientation,
@@ -38,7 +42,7 @@ const SIDE_STYLE: Record<Side, { chip: string; heading: string; arrow: string; l
   right: { chip: "bg-accent-bg text-accent", heading: "text-accent", arrow: "→", label: "right" },
 };
 
-type Filter = "all" | "left" | "right" | "starts";
+type Filter = "all" | "left" | "right" | "starts" | "home";
 
 // ── Setup: "which way are you facing?" ─────────────────────────────────────
 
@@ -162,6 +166,167 @@ function SideSetup({
         <button type="button" onClick={() => setEditing(false)} className="mt-3 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-fg">
           Done
         </button>
+      )}
+    </Card>
+  );
+}
+
+// ── Going home ─────────────────────────────────────────────────────────────
+
+function SideWord({ side }: { side: Side }) {
+  const s = SIDE_STYLE[side];
+  return <strong className={s.heading}>{side === "left" ? `${s.arrow} your left` : `your right ${s.arrow}`}</strong>;
+}
+
+function HomePicker({ onDone }: { onDone?: () => void }) {
+  return (
+    <div className="mt-3 space-y-2">
+      <SearchCombobox
+        label="Your home station"
+        placeholder="e.g. BPL or Bhopal"
+        endpoint="/api/stations/search"
+        toItem={stationItem}
+        acceptRaw={(t) => (/^[A-Za-z]{2,6}$/.test(t) ? { id: t.toUpperCase(), primary: t.toUpperCase() } : null)}
+        onSelect={(i) => {
+          saveHomeStation({ code: i.id, name: i.secondary || i.id });
+          onDone?.();
+        }}
+      />
+      {onDone && (
+        <button type="button" onClick={onDone} className="rounded-xl px-3 py-2 text-sm font-medium text-muted hover:bg-surface-2">
+          Cancel
+        </button>
+      )}
+    </div>
+  );
+}
+
+function GoingHomeCard({
+  station,
+  home,
+  result,
+  sidesKnown,
+  now,
+  onShowOnly,
+}: {
+  station: { code: string; name: string };
+  home: HomeStation | null;
+  result: GoingHome | null;
+  sidesKnown: boolean;
+  now: number;
+  onShowOnly: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+
+  if (!home || editing) {
+    return (
+      <Card>
+        <h2 className="font-semibold">🏠 Going home?</h2>
+        <p className="text-sm text-muted">Save your home station and we&apos;ll pick out the trains here that stop there, and which side they come from.</p>
+        <HomePicker onDone={editing ? () => setEditing(false) : undefined} />
+      </Card>
+    );
+  }
+
+  const actions = (
+    <div className="flex gap-1">
+      <button type="button" onClick={() => setEditing(true)} className="rounded-xl bg-surface-2 px-3 py-1.5 text-sm font-medium hover:bg-info-bg">
+        Change
+      </button>
+      <button type="button" onClick={() => saveHomeStation(null)} className="rounded-xl px-3 py-1.5 text-sm font-medium text-muted hover:bg-surface-2">
+        Remove
+      </button>
+    </div>
+  );
+  const heading = (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h2 className="font-semibold">
+        🏠 Going home to {home.name} <span className="font-mono text-xs text-muted">{home.code}</span>
+      </h2>
+      {actions}
+    </div>
+  );
+
+  if (home.code === station.code) {
+    return (
+      <Card>
+        {heading}
+        <p className="mt-2 text-sm">You&apos;re already at your home station.</p>
+      </Card>
+    );
+  }
+
+  const trains = result?.trains ?? [];
+  const next = result?.next;
+  return (
+    <Card className="border-primary/40">
+      {heading}
+      {!next ? (
+        <p className="mt-2 text-sm">
+          No train that stops at {home.name} is due here in the next hour.{" "}
+          <Link href={`/between?from=${station.code}&to=${home.code}`} className="font-medium text-primary underline">
+            See all trains to {home.name}
+          </Link>
+        </p>
+      ) : (
+        <>
+          {sidesKnown ? (
+            (result!.arrivesFrom || result!.leavesTo) && (
+              <p className="mt-2 text-base">
+                Trains to {home.name}
+                {result!.arrivesFrom && (
+                  <>
+                    {" "}come in from <SideWord side={result!.arrivesFrom} />
+                  </>
+                )}
+                {result!.arrivesFrom && result!.leavesTo && " and"}
+                {result!.leavesTo && (
+                  <>
+                    {" "}leave towards <SideWord side={result!.leavesTo} />
+                  </>
+                )}
+                .
+              </p>
+            )
+          ) : (
+            <p className="mt-2 text-sm text-muted">Set your left and right above to see which side they come from.</p>
+          )}
+          <div className="mt-3 rounded-xl bg-surface-2 p-3">
+            <p className="text-xs font-semibold tracking-wide text-muted uppercase">Next train home</p>
+            <div className="mt-1 flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <Link href={`/train/${next.trainNumber}?date=${next.journeyDate}`} className="font-semibold hover:underline">
+                  <span className="font-mono">{next.trainNumber}</span> {next.trainName}
+                </Link>
+                <p className="text-sm text-muted">{describeSide(next)}</p>
+              </div>
+              <PlatformTag platform={next.platform} quietFor={next.timeQuality} />
+            </div>
+            <p className="mt-1 text-sm">
+              {next.status === "at_platform" ? (
+                <strong>Standing at the platform now</strong>
+              ) : next.originatesHere ? (
+                <>
+                  Leaves <span className="font-mono font-semibold">{formatTime(next.expectedDeparture)}</span> {formatCountdown(next.expectedDeparture, now)}
+                </>
+              ) : (
+                <>
+                  Arrives <span className="font-mono font-semibold">{formatTime(next.expectedArrival)}</span> {formatCountdown(next.expectedArrival, now)}
+                </>
+              )}
+            </p>
+          </div>
+          {trains.length > 1 && (
+            <button type="button" onClick={onShowOnly} className="mt-3 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-fg hover:opacity-90">
+              Show all {trains.length} trains to {home.name}
+            </button>
+          )}
+        </>
+      )}
+      {result && result.unchecked > 0 && (
+        <p className="mt-2 text-xs text-muted">
+          We couldn&apos;t load the route of {result.unchecked} train{result.unchecked === 1 ? "" : "s"}, so {result.unchecked === 1 ? "it isn't" : "they aren't"} checked here.
+        </p>
       )}
     </Card>
   );
@@ -298,7 +463,8 @@ export function ApproachingView({ code }: { code: string }) {
     refreshMs: 30_000,
   });
   const orientation = useOrientation(code);
-  const [filter, setFilter] = useState<Filter>("all");
+  const home = useHomeStation();
+  const [chosenFilter, setFilter] = useState<Filter>("all");
   // Re-filter as time passes between refreshes.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -317,7 +483,20 @@ export function ApproachingView({ code }: { code: string }) {
   const sided = applySides(selectApproaching(data.rows, now), userSet ? effective : null, data.layout.available);
   const groups = groupBySide(sided);
   const sidesKnown = userSet || data.layout.available;
-  const shown = filter === "left" ? groups.left : filter === "right" ? groups.right : filter === "starts" ? groups.startsHere : sided;
+  const homeActive = !!home && home.code !== data.station.code;
+  const homeResult = homeActive ? goingHome(sided, home.code) : null;
+  // The "To home" filter disappears when home is removed; fall back to all trains.
+  const filter: Filter = chosenFilter === "home" && !homeResult ? "all" : chosenFilter;
+  const shown =
+    filter === "left"
+      ? groups.left
+      : filter === "right"
+        ? groups.right
+        : filter === "starts"
+          ? groups.startsHere
+          : filter === "home"
+            ? homeResult!.trains
+            : sided;
 
   const platforms = data.layout.platforms.length
     ? data.layout.platforms
@@ -335,6 +514,7 @@ export function ApproachingView({ code }: { code: string }) {
     { id: "right", label: "From right →", count: groups.right.length, active: "bg-accent-solid text-white" },
     { id: "starts", label: "Starts here", count: groups.startsHere.length, active: "bg-primary text-primary-fg" },
   ];
+  if (homeResult) FILTERS.push({ id: "home", label: `🏠 To ${home!.code}`, count: homeResult.trains.length, active: "bg-primary text-primary-fg" });
 
   return (
     <div className="space-y-4">
@@ -361,6 +541,8 @@ export function ApproachingView({ code }: { code: string }) {
 
       <SideSetup stationCode={data.station.code} neighbours={neighbours} orientation={orientation} layoutAvailable={data.layout.available} />
 
+      <GoingHomeCard station={data.station} home={home} result={homeResult} sidesKnown={sidesKnown} now={now} onShowOnly={() => setFilter("home")} />
+
       {sidesKnown && platforms.length > 0 && (
         <Card>
           <h2 className="mb-3 font-semibold">Track view</h2>
@@ -374,7 +556,7 @@ export function ApproachingView({ code }: { code: string }) {
         </Card>
       )}
 
-      {sidesKnown && (
+      {(sidesKnown || homeResult) && (
         <div role="radiogroup" aria-label="Show trains" className="flex gap-1.5 overflow-x-auto">
           {FILTERS.map((f) => (
             <button
@@ -394,7 +576,7 @@ export function ApproachingView({ code }: { code: string }) {
       {sided.length === 0 ? (
         <EmptyState title="No trains due in the next hour">Check the full board for later trains.</EmptyState>
       ) : shown.length === 0 ? (
-        <EmptyState title="No trains on that side right now">Try “All”.</EmptyState>
+        <EmptyState title={filter === "home" ? `No trains to ${home!.name} in the next hour` : "No trains on that side right now"}>Try “All”.</EmptyState>
       ) : sidesKnown && filter === "all" ? (
         <div className="space-y-5">
           <Section title={`← From ${userSet ? "your" : "the"} left`} tone="text-teal" rows={groups.left} now={now} />

@@ -7,6 +7,7 @@ import {
   neighboursOf,
   swapOrientation,
 } from "@/lib/services/orientation";
+import { goingHome, reachesHome } from "@/lib/services/going-home";
 import type { BoardRow } from "@/lib/services/views";
 
 const st = (code: string) => ({ code, name: `${code} Station` });
@@ -27,6 +28,7 @@ function row(key: string, from: string | null, to: string | null, extra: Partial
     nextHalt: to ? st(to) : null,
     arrivesFrom: from ? st(from) : null,
     departsToward: to ? st(to) : null,
+    haltsAfter: null,
     arrivalSide: null,
     departureSide: null,
     scheduledArrival: null,
@@ -108,5 +110,52 @@ describe("left / right at a station", () => {
     const junction = [...rows, row("branch", "NNN", "EEE")];
     const sided = applySides(junction, { EEE: "right", WWW: "left" }, false);
     expect(groupBySide(sided).unknown.map((r) => r.key)).toEqual(["branch"]);
+  });
+});
+
+describe("going home", () => {
+  // Home is HOM, two stops east of here (EEE, then HOM).
+  const east = { haltsAfter: ["EEE", "HOM"] };
+  const homeRows = [
+    row("down1", "WWW", "EEE", east),
+    row("up1", "EEE", "WWW", { haltsAfter: ["WWW"] }),
+    row("starter", null, "EEE", east),
+    row("ender", "WWW", null, { haltsAfter: [] }),
+    row("unknown", "WWW", "EEE"), // route not loaded: haltsAfter null
+  ];
+  const facing = { EEE: "right", WWW: "left" } as const;
+
+  it("lists only trains that stop at home later on their route", () => {
+    expect(reachesHome(homeRows[0], "HOM")).toBe(true);
+    expect(reachesHome(homeRows[1], "HOM")).toBe(false);
+    expect(reachesHome(homeRows[3], "HOM")).toBe(false);
+    expect(goingHome(applySides(homeRows, facing, false), "HOM").trains.map((r) => r.key)).toEqual(["down1", "starter"]);
+  });
+
+  it("skips a train that has just left when picking the next train home", () => {
+    const rows = [row("gone", "WWW", "EEE", { ...east, status: "departed" }), ...homeRows];
+    const g = goingHome(applySides(rows, facing, false), "HOM");
+    expect(g.trains.map((r) => r.key)).toEqual(["gone", "down1", "starter"]);
+    expect(g.next?.key).toBe("down1");
+    expect(goingHome(applySides([rows[0]], facing, false), "HOM").next).toBeNull();
+  });
+
+  it("counts trains with an unknown route as unchecked instead of guessing", () => {
+    expect(reachesHome(homeRows[4], "HOM")).toBeNull();
+    expect(goingHome(applySides(homeRows, facing, false), "HOM").unchecked).toBe(1);
+  });
+
+  it("tells which side home trains come in from and leave towards", () => {
+    const g = goingHome(applySides(homeRows, facing, false), "HOM");
+    // The starter has no arrival side, so it does not count against "comes in from your left".
+    expect(g.arrivesFrom).toBe("left");
+    expect(g.leavesTo).toBe("right");
+  });
+
+  it("gives no side when sides are unknown or the home trains disagree", () => {
+    expect(goingHome(applySides(homeRows, null, false), "HOM")).toMatchObject({ arrivesFrom: null, leavesTo: null });
+    // A train that reverses here (comes in from the east and goes back east) disagrees with the through train.
+    const reversing = [...homeRows, row("rev", "EEE", "EEE", east)];
+    expect(goingHome(applySides(reversing, facing, false), "HOM")).toMatchObject({ arrivesFrom: null, leavesTo: "right" });
   });
 });

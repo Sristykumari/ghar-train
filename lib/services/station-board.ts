@@ -127,9 +127,10 @@ export function sideFromRoute(
 }
 
 function neighbourHalts(route: TrainSchedule | null, stationCode: string) {
-  if (!route) return { prevHalt: null, nextHalt: null, prevAny: null, nextAny: null };
+  const none = { prevHalt: null, nextHalt: null, prevAny: null, nextAny: null, haltsAfter: null };
+  if (!route) return none;
   const idx = route.stops.findIndex((s) => s.stationCode === stationCode);
-  if (idx === -1) return { prevHalt: null, nextHalt: null, prevAny: null, nextAny: null };
+  if (idx === -1) return none;
   const pick = (s: TrainSchedule["stops"][number] | undefined) => (s ? { code: s.stationCode, name: s.stationName } : null);
   const before = route.stops.slice(0, idx);
   const after = route.stops.slice(idx + 1);
@@ -138,6 +139,7 @@ function neighbourHalts(route: TrainSchedule | null, stationCode: string) {
     nextHalt: pick(after.find((s) => s.isHalt)),
     prevAny: pick(before[before.length - 1]),
     nextAny: pick(after[0]),
+    haltsAfter: after.filter((s) => s.isHalt).map((s) => s.stationCode),
   };
 }
 
@@ -196,6 +198,7 @@ export async function getStationBoard(provider: RailDataProvider, input: Station
       nextHalt: n.nextHalt,
       arrivesFrom: n.prevAny,
       departsToward: n.nextAny,
+      haltsAfter: n.haltsAfter,
       arrivalSide: sideFromRoute(layout, route, stationCode, "arrival"),
       departureSide: sideFromRoute(layout, route, stationCode, "departure"),
       scheduledArrival: i.schedArr,

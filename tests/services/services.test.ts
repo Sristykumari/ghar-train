@@ -107,6 +107,10 @@ describe("station board and approaching trains", () => {
     expect(fast.arrivalSide).toBeNull();
     expect(fast.timeQuality).toBe("scheduled");
     expect(b.layout.available).toBe(true);
+
+    // Later stops come from each train's own route; stations it passes without stopping are left out.
+    expect(slow.haltsAfter).toEqual(["CCC", "DDD", "EEE"]);
+    expect(fast.haltsAfter).toEqual(["DDD", "EEE"]);
   });
 
   it("never assigns a side without a verified layout", () => {
